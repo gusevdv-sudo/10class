@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тригонометрические функции — просто о сложном</title>
+<style>
+  :root{
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --text:#1f2a44;
+    --muted:#5a6b8a;
+    --accent:#2f6fed;
+    --accent2:#e94f6b;
+    --border:#e2e8f3;
+    --green:#1f9d76;
+    --purple:#b45cf0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Segoe UI', Roboto, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.7;
+    font-size:16px;
+  }
+  header{
+    background:linear-gradient(135deg,#2f6fed,#5b8def);
+    color:#fff;
+    padding:48px 20px;
+    text-align:center;
+  }
+  header h1{font-size:2rem;margin-bottom:10px;}
+  header p{opacity:.92;font-size:1.05rem;}
+  main{
+    max-width:1000px;
+    margin:0 auto;
+    padding:32px 20px 60px;
+  }
+  .intro{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px 24px;
+    margin-bottom:28px;
+    box-shadow:0 4px 14px rgba(47,111,237,.06);
+  }
+  .intro h2{font-size:1.25rem;margin-bottom:10px;color:var(--accent);}
+  .intro p{margin-bottom:10px;}
+
+  .simple{
+    background:#fffbe9;
+    border-left:5px solid #f0b429;
+    border-radius:8px;
+    padding:14px 18px;
+    margin:14px 0;
+    font-size:.98rem;
+  }
+  .simple b{color:#b07a00;}
+
+  .analogy{
+    background:#eef7ff;
+    border-left:5px solid #2f6fed;
+    border-radius:8px;
+    padding:14px 18px;
+    margin:14px 0;
+    font-size:.98rem;
+  }
+  .analogy b{color:var(--accent);}
+
+  section.func{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:24px;
+    margin-bottom:28px;
+    box-shadow:0 4px 14px rgba(47,111,237,.06);
+  }
+  section.func h2{
+    font-size:1.4rem;
+    margin-bottom:6px;
+    color:var(--accent);
+  }
+  section.func .formula{
+    font-family:'Cambria Math', Georgia, serif;
+    font-size:1.25rem;
+    font-style:italic;
+    color:var(--muted);
+    margin-bottom:16px;
+  }
+  .graph-wrap{
+    background:#fbfcff;
+    border:1px dashed var(--border);
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:18px;
+    text-align:center;
+  }
+  canvas{max-width:100%;height:auto;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.95rem;
+    margin-top:10px;
+  }
+  th,td{
+    border:1px solid var(--border);
+    padding:10px 12px;
+    text-align:left;
+    vertical-align:top;
+  }
+  th{
+    background:#eef3fd;
+    color:var(--text);
+    width:34%;
+    font-weight:600;
+  }
+  tr:nth-child(even) td{background:#fafbff;}
+  .note{
+    font-size:.92rem;
+    color:var(--muted);
+    margin-top:10px;
+    font-style:italic;
+  }
+  h3.sub{
+    font-size:1.05rem;
+    margin:18px 0 8px;
+    color:var(--text);
+  }
+  .circle-demo{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    align-items:center;
+    justify-content:center;
+    margin-top:14px;
+  }
+  .circle-demo canvas{background:#fff;border-radius:10px;border:1px solid var(--border);}
+  .circle-demo ul{flex:1;min-width:240px;padding-left:20px;}
+  .circle-demo li{margin-bottom:6px;}
+  footer{
+    text-align:center;
+    padding:24px;
+    color:var(--muted);
+    font-size:.9rem;
+    border-top:1px solid var(--border);
+  }
+  @media (max-width:600px){
+    header h1{font-size:1.5rem;}
+    section.func h2{font-size:1.2rem;}
+    th,td{display:block;width:100%;}
+    th{border-bottom:none;background:#eef3fd;}
+    td{margin-bottom:6px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Тригонометрические функции — просто о сложном</h1>
+  <p>y = sin x &nbsp;·&nbsp; y = cos x &nbsp;·&nbsp; y = tg x &nbsp;·&nbsp; y = ctg x</p>
+</header>
+
+<main>
+
+  <!-- ============ ВВЕДЕНИЕ ============ -->
+  <div class="intro">
+    <h2>С чего всё началось: единичная окружность</h2>
+    <p>Представь окружность радиусом 1 с центром в начале координат. Такую окружность называют <b>единичной</b>. Возьмём на ней точку и будем двигать её против часовой стрелки — как стрелку часов, только наоборот.</p>
+
+    <div class="circle-demo">
+      <canvas id="unitCircle" width="620" height="320"></canvas>
+      <ul>
+        <li><b>Синяя точка</b> бежит по окружности против часовой стрелки.</li>
+        <li><b>Красный пунктир</b> — вертикальная проекция: её длина равна <b>sin x</b>.</li>
+        <li><b>Зелёный пунктир</b> — горизонтальная проекция: её длина равна <b>cos x</b>.</li>
+        <li>Справа «набегает» волна — так рождается график функции.</li>
+        <li>Обе проекции всегда лежат в пределах от −1 до 1 — радиус окружности равен 1.</li>
+      </ul>
+    </div>
+
+    <div class="analogy">
+      <b>Аналогия:</b> синус и косинус — это как «тень» точки на две стенки: одна стенка справа (ось x), другая сверху (ось y). Куда бы ни ушла точка по окружности, её тени не могут убежать дальше, чем на 1.
+    </div>
+  </div>
+
+  <!-- ============ ПЕРИОД ============ -->
+  <div class="intro">
+    <h2>Что такое период и почему все они «ходят по кругу»</h2>
+    <p>Когда точка делает полный оборот по окружности, она возвращается в то же самое место. Значит, и синус, и косинус повторяют свои значения через каждые <b>2π</b> (это полный круг).</p>
+    <p>У тангенса и котангенса период в два раза меньше — <b>π</b>, потому что они зависят от отношения синуса к косинусу, и знаки у обоих одновременно меняются.</p>
+    <div class="simple">
+      <b>Простыми словами:</b> период — это «шаг повторения». Если знаешь, как функция ведёт себя на одном периоде, — знаешь её всю.
+    </div>
+  </div>
+
+  <!-- ================= SIN ================= -->
+  <section class="func">
+    <h2>Функция y = sin x</h2>
+    <div class="formula">y = sin x</div>
+    <div class="graph-wrap">
+      <canvas id="sinCanvas" width="880" height="320"></canvas>
+    </div>
+
+    <div class="simple">
+      <b>Простыми словами:</b> синус — это «вертикальная тень» точки на единичной окружности. Она плавно качается вверх-вниз от −1 до 1, как маятник.
+    </div>
+
+    <h3 class="sub">Свойства</h3>
+    <table>
+      <tr><th>Область определения</th><td>D(y) = ℝ. Синус можно посчитать для любого числа — ограничений нет.</td></tr>
+      <tr><th>Область значений</th><td>E(y) = [−1; 1]. Синус никогда не бывает больше 1 или меньше −1.</td></tr>
+      <tr><th>Период</th><td>T = 2π. Через каждые 2π график повторяется.</td></tr>
+      <tr><th>Чётность</th><td>Нечётная: sin(−x) = −sin x. График симметричен относительно начала координат.</td></tr>
+      <tr><th>Нули функции</th><td>x = πn. Синус равен нулю, когда точка стоит на горизонтальной оси.</td></tr>
+      <tr><th>Промежутки знакопостоянства</th><td>sin x &gt; 0 сверху оси Ox; sin x &lt; 0 снизу оси Ox.</td></tr>
+      <tr><th>Монотонность</th><td>Возрастает от −π/2 до π/2, потом убывает от π/2 до 3π/2, и так по кругу.</td></tr>
+      <tr><th>Экстремумы</th><td>max y = 1 при x = π/2 + 2πn; min y = −1 при x = −π/2 + 2πn.</td></tr>
+    </table>
+    <p class="note">Запомнить: синус — «качели»: вверх-вниз, вверх-вниз, плавно и без разрывов.</p>
+  </section>
+
+  <!-- ================= COS ================= -->
+  <section class="func">
+    <h2>Функция y = cos x</h2>
+    <div class="formula">y = cos x</div>
+    <div class="graph-wrap">
+      <canvas id="cosCanvas" width="880" height="320"></canvas>
+    </div>
+
+    <div class="simple">
+      <b>Простыми словами:</b> косинус — это «горизонтальная тень» точки на окружности. Это та же волна, что и у синуса, только сдвинутая на π/2 влево.
+    </div>
+
+    <div class="analogy">
+      <b>Сравнение:</b> если синус начинается из нуля и идёт вверх, то косинус стартует с самой вершины (значение 1). Поэтому cos x = sin(x + π/2).
+    </div>
+
+    <h3 class="sub">Свойства</h3>
+    <table>
+      <tr><th>Область определения</th><td>D(y) = ℝ. Ограничений нет.</td></tr>
+      <tr><th>Область значений</th><td>E(y) = [−1; 1].</td></tr>
+      <tr><th>Период</th><td>T = 2π.</td></tr>
+      <tr><th>Чётность</th><td>Чётная: cos(−x) = cos x. График симметричен относительно оси Oy.</td></tr>
+      <tr><th>Нули функции</th><td>x = π/2 + πn.</td></tr>
+      <tr><th>Промежутки знакопостоянства</th><td>cos x &gt; 0 справа от оси Oy; cos x &lt; 0 слева.</td></tr>
+      <tr><th>Монотонность</th><td>Убывает от 0 до π, возрастает от π до 2π, и так по кругу.</td></tr>
+      <tr><th>Экстремумы</th><td>max y = 1 при x = 2πn; min y = −1 при x = π + 2πn.</td></tr>
+    </table>
+    <p class="note">Запомнить: косинус — «та же волна», что синус, но стартует с 1, а не с 0.</p>
+  </section>
+
+  <!-- ================= TG ================= -->
+  <section class="func">
+    <h2>Функция y = tg x</h2>
+    <div class="formula">y = tg x = sin x / cos x</div>
+    <div class="graph-wrap">
+      <canvas id="tgCanvas" width="880" height="320"></canvas>
+    </div>
+
+    <div class="simple">
+      <b>Простыми словами:</b> тангенс — это «насколько круто» наклонена линия из центра окружности к нашей точке. Где косинус близок к нулю (точка почти вертикально), там наклон становится бесконечно большим — и график «улетает» вверх или вниз.
+    </div>
+
+    <div class="analogy">
+      <b>Аналогия с горкой:</b> представь лыжную горку. Тангенс — это её крутизна. Чем ближе к обрыву (cos x → 0), тем страшнее склон — он уходит в бесконечность.
+    </div>
+
+    <h3 class="sub">Свойства</h3>
+    <table>
+      <tr><th>Область определения</th><td>D(y) = ℝ \ {π/2 + πn}. Там, где cos x = 0, тангенс не существует.</td></tr>
+      <tr><th>Область значений</th><td>E(y) = ℝ. Тангенс может быть любым числом.</td></tr>
+      <tr><th>Период</th><td>T = π. Повторяется в два раза чаще, чем синус.</td></tr>
+      <tr><th>Чётность</th><td>Нечётная: tg(−x) = −tg x.</td></tr>
+      <tr><th>Нули функции</th><td>x = πn. Там же, где нули синуса.</td></tr>
+      <tr><th>Промежутки знакопостоянства</th><td>tg x &gt; 0 в 1-й и 3-й «четвертях», tg x &lt; 0 — во 2-й и 4-й.</td></tr>
+      <tr><th>Монотонность</th><td>Возрастает на каждом своём промежутке между асимптотами.</td></tr>
+      <tr><th>Асимптоты</th><td>Вертикальные прямые x = π/2 + πn (пунктир на графике).</td></tr>
+    </table>
+    <p class="note">Наибольшего и наименьшего значений нет — функция неограниченно растёт и падает.</p>
+  </section>
+
+  <!-- ================= CTG ================= -->
+  <section class="func">
+    <h2>Функция y = ctg x</h2>
+    <div class="formula">y = ctg x = cos x / sin x</div>
+    <div class="graph-wrap">
+      <canvas id="ctgCanvas" width="880" height="320"></canvas>
+    </div>
+
+    <div class="simple">
+      <b>Простыми словами:</b> котангенс — «перевёрнутый» тангенс. Там, где тангенс улетает вверх, котангенс спокойно проходит через ноль, и наоборот. Он тоже рвётся в бесконечность, но уже там, где sin x = 0.
+    </div>
+
+    <div class="analogy">
+      <b>Сравнение:</b> tg x и ctg x — как две ветки одной лестницы: если одна круто идёт вверх, вторая в этом же месте почти горизонтальна.
+    </div>
+
+    <h3 class="sub">Свойства</h3>
+    <table>
+      <tr><th>Область определения</th><td>D(y) = ℝ \ {πn}. Там, где sin x = 0, котангенс не существует.</td></tr>
+      <tr><th>Область значений</th><td>E(y) = ℝ.</td></tr>
+      <tr><th>Период</th><td>T = π.</td></tr>
+      <tr><th>Чётность</th><td>Нечётная: ctg(−x) = −ctg x.</td></tr>
+      <tr><th>Нули функции</th><td>x = π/2 + πn. Там же, где нули косинуса.</td></tr>
+      <tr><th>Промежутки знакопостоянства</th><td>ctg x &gt; 0 в 1-й и 3-й «четвертях», ctg x &lt; 0 — во 2-й и 4-й.</td></tr>
+      <tr><th>Монотонность</th><td>Убывает на каждом промежутке между асимптотами.</td></tr>
+      <tr><th>Асимптоты</th><td>Вертикальные прямые x = πn (пунктир на графике).</td></tr>
+    </table>
+    <p class="note">Наибольшего и наименьшего значений нет.</p>
+  </section>
+
+  <!-- ============ ИТОГ ============ -->
+  <div class="intro">
+    <h2>Что необходимо запомнить</h2>
+    <ul style="padding-left:22px;">
+      <li><b>sin и cos</b> — «тени» точки на окружности. Обе лежат в пределах от −1 до 1 и повторяются через 2π.</li>
+      <li><b>sin</b> — нечётная, начинается с 0. <b>cos</b> — чётная, начинается с 1.</li>
+      <li><b>tg и ctg</b> — отношения sin и cos. Они могут быть любыми числами, но имеют «запрещённые» точки, где знаменатель равен нулю.</li>
+      <li>Там, где функция рвётся — проходит <b>вертикальная асимптота</b> (пунктир на графике).</li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>
+  Учебный материал · пропедевтика тригонометрии
+</footer>
+
+<script>
+/* ================== Утилиты рисования графиков ================== */
+const PI = Math.PI;
+
+function drawAxes(ctx, W, H, unit, cx, cy){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#fbfcff';
+  ctx.fillRect(0,0,W,H);
+
+  ctx.strokeStyle = '#e6ecf7';
+  ctx.lineWidth = 1;
+  for(let x = cx % unit; x < W; x += unit){
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
+  }
+  for(let y = cy % unit; y < H; y += unit){
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+
+  ctx.strokeStyle = '#8a9ab8';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+  ctx.fillStyle = '#8a9ab8';
+  ctx.beginPath(); ctx.moveTo(W-1,cy); ctx.lineTo(W-10,cy-5); ctx.lineTo(W-10,cy+5); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(cx,1); ctx.lineTo(cx-5,10); ctx.lineTo(cx+5,10); ctx.fill();
+
+  ctx.fillStyle = '#5a6b8a';
+  ctx.font = '13px Segoe UI, Arial';
+  ctx.fillText('x', W-16, cy-10);
+  ctx.fillText('y', cx+8, 16);
+}
+
+function plot(ctx, W, H, unit, cx, cy, f, color, opts={}){
+  const { asymptotes=[], breakCheck=null } = opts;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0,0,W,H);
+  ctx.clip();
+
+  ctx.strokeStyle = '#e94f6b';
+  ctx.setLineDash([6,5]);
+  ctx.lineWidth = 1.2;
+  asymptotes.forEach(ax=>{
+    const px = cx + ax*unit;
+    if(px>=0 && px<=W){
+      ctx.beginPath(); ctx.moveTo(px,0); ctx.lineTo(px,H); ctx.stroke();
+    }
+  });
+  ctx.setLineDash([]);
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.4;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+
+  let started = false;
+  for(let px=0; px<=W; px++){
+    const x = (px - cx)/unit;
+    const y = f(x);
+    if(!isFinite(y) || Math.abs(y) > 1e6 || (breakCheck && breakCheck(x,y))){
+      started = false; continue;
+    }
+    const py = cy - y*unit;
+    if(py < -1000 || py > H+1000){ started = false; continue; }
+    if(!started){ ctx.moveTo(px,py); started = true; }
+    else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+function render(id, f, color, opts={}){
+  const c = document.getElementById(id);
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const unit = 40;
+  const cx = W/2, cy = H/2;
+  drawAxes(ctx, W, H, unit, cx, cy);
+  plot(ctx, W, H, unit, cx, cy, f, color, opts);
+
+  ctx.fillStyle = '#5a6b8a';
+  ctx.font = '12px Segoe UI, Arial';
+  ctx.textAlign='center';
+  [ -2*PI, -PI, PI, 2*PI ].forEach(v=>{
+    const px = cx + v*unit;
+    if(px>10 && px<W-10){
+      ctx.fillText((v/PI)+'π', px, cy+16);
+    }
+  });
+  ctx.textAlign='right';
+  ctx.fillText('1', cx-6, cy-unit+4);
+  ctx.fillText('-1', cx-6, cy+unit+4);
+}
+
+/* ================== Единичная окружность с анимацией ================== */
+const unitState = { angle: 0, trailSin: [], trailCos: [] };
+
+function drawUnitCircleAnimated(){
+  const c = document.getElementById('unitCircle');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+
+  const circleX = 160;
+  const circleY = H/2;
+  const R = 110;
+
+  const waveX0 = circleX + R + 40;
+  const waveW  = W - waveX0 - 20;
+  const xScale = waveW / (2*Math.PI);
+
+  const a = unitState.angle;
+  const sinV = Math.sin(a);
+  const cosV = Math.cos(a);
+
+  const px = circleX + R*cosV;
+  const py = circleY - R*sinV;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0,0,W,H);
+
+  // сетка
+  ctx.strokeStyle = '#eef2fa';
+  ctx.lineWidth = 1;
+  for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // оси
+  ctx.strokeStyle = '#8a9ab8';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.moveTo(circleX, 20); ctx.lineTo(circleX, H-20); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(20, circleY); ctx.lineTo(W-20, circleY); ctx.stroke();
+
+  ctx.fillStyle = '#5a6b8a';
+  ctx.font = '12px Segoe UI, Arial';
+  ctx.textAlign='left';
+  ctx.fillText('y', circleX + 6, 26);
+  ctx.fillText('x', W - 20, circleY - 8);
+  ctx.fillText('1', circleX - 14, circleY - R + 4);
+  ctx.fillText('-1', circleX - 22, circleY + R + 4);
+
+  // окружность
+  ctx.strokeStyle = '#2f6fed';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(circleX, circleY, R, 0, 2*Math.PI);
+  ctx.stroke();
+
+  // радиус
+  ctx.strokeStyle = '#1f2a44';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(circleX,circleY); ctx.lineTo(px,py); ctx.stroke();
+
+  // угол
+  ctx.strokeStyle = '#f0b429';
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.arc(circleX, circleY, 28, -a, 0);
+  ctx.stroke();
+
+  // проекции
+  ctx.setLineDash([4,4]);
+  ctx.strokeStyle = '#1f9d76';
+  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,circleY); ctx.stroke();
+  ctx.strokeStyle = '#e94f6b';
+  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(circleX,py); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // точка
+  ctx.fillStyle = '#1f2a44';
+  ctx.beginPath(); ctx.arc(px,py,6,0,2*Math.PI); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(px,py,6,0,2*Math.PI); ctx.stroke();
+
+  // подписи
+  ctx.font = 'bold 12px Segoe UI, Arial';
+  ctx.fillStyle = '#1f9d76';
+  ctx.textAlign = 'right';
+  ctx.fillText('cos x', px - 6, circleY + 16);
+  ctx.fillStyle = '#e94f6b';
+  ctx.textAlign = 'center';
+  ctx.fillText('sin x', circleX - 28, py + 4);
+
+  // === ПРАВАЯ ЧАСТЬ: развёртка ===
+  ctx.strokeStyle = '#e2e8f3';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(waveX0, 20, waveW, H-40);
+
+  ctx.strokeStyle = '#e6ecf7';
+  ctx.setLineDash([3,4]);
+  ctx.beginPath();
+  ctx.moveTo(waveX0, circleY - R); ctx.lineTo(waveX0 + waveW, circleY - R);
+  ctx.moveTo(waveX0, circleY + R); ctx.lineTo(waveX0 + waveW, circleY + R);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // накопление следа
+  unitState.trailSin.push({ a, v: sinV });
+  unitState.trailCos.push({ a, v: cosV });
+  const maxLen = 400;
+  if(unitState.trailSin.length > maxLen){
+    unitState.trailSin.shift();
+    unitState.trailCos.shift();
+  }
+
+  // след синуса
+  ctx.strokeStyle = '#e94f6b';
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  unitState.trailSin.forEach((p,i)=>{
+    const x = waveX0 + p.a * xScale;
+    const y = circleY - p.v * R;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // след косинуса
+  ctx.strokeStyle = '#1f9d76';
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  unitState.trailCos.forEach((p,i)=>{
+    const x = waveX0 + p.a * xScale;
+    const y = circleY - p.v * R;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // бегущие точки на концах волн
+  const lastSin = unitState.trailSin[unitState.trailSin.length-1];
+  if(lastSin){
+    ctx.fillStyle = '#e94f6b';
+    ctx.beginPath();
+    ctx.arc(waveX0 + lastSin.a*xScale, circleY - lastSin.v*R, 4, 0, 2*Math.PI);
+    ctx.fill();
+  }
+  const lastCos = unitState.trailCos[unitState.trailCos.length-1];
+  if(lastCos){
+    ctx.fillStyle = '#1f9d76';
+    ctx.beginPath();
+    ctx.arc(waveX0 + lastCos.a*xScale, circleY - lastCos.v*R, 4, 0, 2*Math.PI);
+    ctx.fill();
+  }
+
+  // подписи волн
+  ctx.font = 'bold 12px Segoe UI, Arial';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#e94f6b';
+  ctx.fillText('sin x', waveX0 + 6, 36);
+  ctx.fillStyle = '#1f9d76';
+  ctx.fillText('cos x', waveX0 + 6, 52);
+}
+
+/* ================== Анимационный цикл ================== */
+let lastT = 0;
+function animateUnitCircle(t){
+  if(!lastT) lastT = t;
+  const dt = (t - lastT) / 1000;
+  lastT = t;
+
+  // полный оборот ~6 сек
+  unitState.angle += dt * (2*Math.PI / 6);
+
+  if(unitState.angle >= 2*Math.PI){
+    unitState.angle = 0;
+    unitState.trailSin = [];
+    unitState.trailCos = [];
+  }
+
+  drawUnitCircleAnimated();
+  requestAnimationFrame(animateUnitCircle);
+}
+
+/* ================== Запуск ================== */
+window.addEventListener('load', ()=>{
+  requestAnimationFrame(animateUnitCircle);
+
+  render('sinCanvas', x=>Math.sin(x), '#2f6fed');
+  render('cosCanvas', x=>Math.cos(x), '#1f9d76');
+
+  const tgAsymp = [-1.5*PI, -0.5*PI, 0.5*PI, 1.5*PI];
+  render('tgCanvas', x=>Math.tan(x), '#e94f6b', {
+    asymptotes: tgAsymp,
+    breakCheck: (x)=> Math.abs(Math.cos(x)) < 1e-3
+  });
+
+  const ctgAsymp = [-2*PI, -PI, 0, PI, 2*PI];
+  render('ctgCanvas', x=>1/Math.tan(x), '#b45cf0', {
+    asymptotes: ctgAsymp,
+    breakCheck: (x)=> Math.abs(Math.sin(x)) < 1e-3
+  });
+});
+</script>
+</body>
+</html>
